@@ -1,0 +1,18 @@
+[project]
+name = "openfactory-virtual-assets"
+version = "0.4.1"
+description = "A collection of virtual assets for OpenFactory."
+requires-python = ">=3.12"
+dependencies = [
+    "MTCAdapters @ git+https://github.com/Demo-Smart-Factory-Concordia-University/MTCAdapters.git",
+]
+
+[project.optional-dependencies]
+dev = [
+    "flake8",
+    "tomlkit",
+]
+
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
