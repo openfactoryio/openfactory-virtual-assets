@@ -9,13 +9,15 @@
 #   - Based on Python 3.13-slim for small image footprint
 #   - Runs with non-root user for better security
 #   - Automatically installs MTCAdapters from GitHub
+#
+# Build:
+#   docker build -t virtual-temp-sensor ./virtual_assets/temp_sensor
+#
 # ------------------------------------------------------------------------------
 
 FROM python:3.13-slim
-LABEL author="Rolf Wuthrich" 
-LABEL organisation="Concordia University"
 LABEL description="Docker image for OpenFactory Virtual Temperature Sensor"
-LABEL documentation="https://github.com/openfactoryio/openfactory-asset-api"
+LABEL documentation="https://github.com/openfactoryio/openfactory-virtual-assets"
 
 ARG UNAME=vtemp_sens
 ARG UID=1200

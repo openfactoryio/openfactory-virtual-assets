@@ -2,15 +2,15 @@
 
 This virtual asset simulates a temperature sensor for OpenFactory.
 
-## Contents
+## 📂 Contents
 
-* `adapter.py` – The adapter code that generates simulated sensor readings.
-* `device.xml` – MTConnect device definition for the virtual sensor.
-* `Dockerfile` – Builds a Docker image for this virtual asset.
+* `adapter.py` – Adapter code generating simulated sensor readings.
+* `device.xml` – MTConnect device definition.
+* `Dockerfile` – Builds a Docker image for this asset.
 
-## Configuration
+## ⚙️ Configuration
 
-The asset is configurable via environment variables. The most common options:
+The asset is configurable via environment variables.
 
 | Variable         | Description                         | Default |
 | ---------------- | ----------------------------------- | ------- |
@@ -19,13 +19,12 @@ The asset is configurable via environment variables. The most common options:
 | `MAX_TEMP`       | Maximum temperature value           | 22      |
 | `ADAPTER_PORT`   | Port exposed by the adapter         | 7878    |
 
-Example YAML configuration to use with OpenFactory:
+Example YAML configuration for OpenFactory:
 
 ```yaml
 devices:
   vtempsens:
     uuid: VIRTUAL-TEMP-SENS-002
-
     connector:
       type: mtconnect
       agent:
@@ -41,12 +40,46 @@ devices:
             - ADAPTER_PORT=7878
 ```
 
-## Deploying
+> **Tip:** Save this YAML as `temp_sensor.yml` (or any preferred name) before deploying.
 
-To deploy the virtual temperature sensor:
+## 🚀 Deploying
+
+Deploy the virtual temperature sensor:
 
 ```bash
 ofa device up temp_sensor.yml
 ```
 
 OpenFactory will automatically build and deploy the virtual asset based on this configuration.
+
+## 🛠 Development
+
+Make sure you are in the devcontainer and that the Kafka cluster is running:
+
+```bash
+spinup
+```
+
+Build the Docker image for the virtual temperature sensor:
+
+```bash
+docker build -t virtual-temp-sensor ./virtual_assets/temp_sensor
+```
+
+Deploy the asset:
+
+```bash
+ofa device up virtual_assets/temp_sensor/temp_sensor.yml 
+```
+
+Inspect the deployed asset:
+
+```bash
+ofa asset inspect VIRTUAL-TEMP-SENS-001
+```
+
+Teardown the asset:
+
+```bash
+ofa device down virtual_assets/temp_sensor/temp_sensor.yml 
+```
