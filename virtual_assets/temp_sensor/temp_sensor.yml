@@ -1,0 +1,21 @@
+# Asset configuration file for devcontainer
+# To deploy it:
+#    ofa device up virtual_assets/temp_sensor/temp_sensor.yml
+
+devices:
+  vtempsens:
+    uuid: VIRTUAL-TEMP-SENS-001
+
+    connector:
+      type: mtconnect
+      agent:
+        port: 2102
+        device_xml: device.xml
+        adapter:
+          image: virtual-temp-sensor
+          port: 7878
+          environment:
+            - SLEEP_INTERVAL=2.0
+            - MIN_TEMP=100
+            - MAX_TEMP=120
+            - ADAPTER_PORT=7878
