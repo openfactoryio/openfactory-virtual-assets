@@ -1,0 +1,36 @@
+<!-- ==========================================================
+     MTConnect Device file for a Virtual Event Generator
+========================================================== -->
+
+<MTConnectDevices>
+  <Devices>
+    <Device uuid="EVENT-GEN" id="veventgen" name="VIRTUAL-EVENT-GENERATOR">
+
+      <!-- General information -->
+      <Description>
+        A Mocked Event Generator producing sequential EventIDs and Timestamps
+      </Description>
+
+      <!-- Required availability data item -->
+      <DataItems>
+        <DataItem category="EVENT" id="avail" type="AVAILABILITY"/>
+      </DataItems>
+
+      <!-- Components -->
+      <Components>
+
+        <!-- Event Generator Component -->
+        <Sensor id="generator" name="EventGenerator">
+
+          <!-- DataItems -->
+          <DataItems>
+            <DataItem category="EVENT" id="event_id" type="MESSAGE" subType="INFO"/>
+            <DataItem category="EVENT" id="event_time" type="TIME"/>
+          </DataItems>
+
+        </Sensor>
+
+      </Components>
+    </Device>
+  </Devices>
+</MTConnectDevices>

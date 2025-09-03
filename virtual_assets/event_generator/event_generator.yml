@@ -1,0 +1,19 @@
+# Asset configuration file for devcontainer
+# To deploy it:
+#    ofa device up virtual_assets/event_generator/event_generator.yml
+
+devices:
+  veventgen:
+    uuid: VIRTUAL-EVENT-GEN-001
+
+    connector:
+      type: mtconnect
+      agent:
+        port: 2104                      # Agent will expose HTTP API here
+        device_xml: device.xml          # our event_id + event_time device model
+        adapter:
+          image: virtual-event-generator
+          port: 7878
+          environment:
+            - SLEEP_INTERVAL=3.0
+            - ADAPTER_PORT=7878
