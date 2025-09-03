@@ -26,7 +26,7 @@ devices:
     connector:
       type: mtconnect
       agent:
-        port:2104
+        port: 2104
         device_xml: github://openfactoryio:openfactory-virtual-assets@/virtual_assets/event_generator/device.xml
         adapter:
           image: ghcr.io/openfactoryio/virtual-event-generator:${OPENFACTORY_VERSION}
