@@ -24,7 +24,6 @@
 
           <!-- DataItems -->
           <DataItems>
-            <DataItem category="EVENT" id="event_id" type="MESSAGE" subType="INFO"/>
             <DataItem category="EVENT" id="event_time" type="TIME"/>
           </DataItems>
 

@@ -1,7 +1,7 @@
 import time
 import os
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict
 from mtcadapter.mtcdevices import MTCDevice
 from mtcadapter.adapters import MTCAdapter
@@ -21,31 +21,26 @@ class VirtualEventGenerator(MTCDevice):
     """
 
     SLEEP_INTERVAL: float = float(os.environ.get("SLEEP_INTERVAL", 3.0))
-    _event_id: int = 0   # counter for unique event IDs
 
     def read_data(self) -> Dict[str, str]:
         """
-        Simulate an event with ID and timestamp.
+        Simulate an event with a timestamp.
         Sleeps for a configured interval, then returns an event dictionary.
 
         Returns:
-            dict[str, Any]: Dictionary containing event_id and event_time.
+            dict[str, Any]: Dictionary containing event_time and timestamp.
         """
         time.sleep(self.SLEEP_INTERVAL)
 
-        # Increment event counter
-        self._event_id += 1
-
         # Generate timestamp in ISO 8601 UTC format
-        timestamp = datetime.utcnow().isoformat() + "Z"
+        timestamp = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
         # Keys must match the DataItem ids in device.xml
         data = {
-            "event_id": str(self._event_id),
             "event_time": timestamp
         }
 
-        logger.info(f"Generated event: ID={self._event_id}, Timestamp={timestamp}")
+        logger.info(f"Generated event: Timestamp={timestamp}")
         return data
 
 
