@@ -1,0 +1,25 @@
+# Asset configuration file for devcontainer
+# To deploy it:
+#    ofa device up virtual_assets/opcua_sensor/opcua_sensor.yml
+
+devices:
+  vtempsens:
+    uuid: VIRTUAL-OPCUA-SENS-001
+
+    connector:
+      type: opcua
+
+      server:
+        uri: opc.tcp://${CONTAINER_IP}:4840/freeopcua/server/
+        namespace_uri: http://examples.openfactory.local/opcua
+
+      device:
+        path: Sensors/TemperatureSensor
+
+        variables:
+          temp: Temperature
+          hum: Humidity
+          sensor_model: SensorModel
+
+        methods:
+          calibrate: Calibrate
