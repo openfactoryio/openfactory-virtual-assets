@@ -1,6 +1,6 @@
 [project]
 name = "openfactory-virtual-assets"
-version = "0.4.1"
+version = "0.4.2"
 description = "A collection of virtual assets for OpenFactory."
 requires-python = ">=3.12"
 dependencies = [
