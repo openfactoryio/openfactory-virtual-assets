@@ -4,7 +4,7 @@ with Temperature, Humidity, Calibrate() method,
 and AlarmConditionType conditions.
 
 Environment Variables:
-    OPCUA_ENDPOINT       (default: opc.tcp://127.0.0.1:4840/freeopcua/server/)
+    OPCUA_ENDPOINT       (default: opc.tcp://0.0.0:4840/freeopcua/server/)
     OPCUA_NAMESPACE      (default: http://examples.openfactory.local/opcua)
     TEMP_MIN             (default: 21.0)
     TEMP_MAX             (default: 25.0)
