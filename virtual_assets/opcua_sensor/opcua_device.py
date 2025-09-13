@@ -19,20 +19,23 @@ OPC UA Server Structure:
 Objects Node
 └── Sensors (Folder)
     └── TemperatureSensor (Object)
-        ├── SensorModel (Variable, Writable, informational)
-        ├── Temperature (Variable, Writable)
-        ├── Humidity (Variable, Writable)
-        └── Calibrate() (Method)
-
-Events:
-    ├── OverTemperatureAlarm (AlarmConditionType)
-    │    ├── Severity: 900
-    │    ├── Message: "Temperature too high"
-    │    └── SourceName: "TemperatureSensor"
-    └── SensorFaultCondition (AlarmConditionType)
-         ├── Severity: 500
-         ├── Message: "Sensor malfunction detected"
-         └── SourceName: "TemperatureSensor"
+        ├── 📄 Variables
+        │   ├── SensorModel (Property, String, ReadOnly)
+        │   ├── Temperature (Variable, Double, ReadOnly)
+        │   └── Humidity (Variable, Double, ReadOnly)
+        ├── ⚙️ Methods
+        │   └── Calibrate()
+        │       ├── InputArguments: None
+        │       └── OutputArguments: StatusCode (Enum/UInt32)
+        └── 🔔 Alarms (Folder)
+            ├── OverTemperatureAlarm (AlarmConditionType)
+            │   ├── Severity: 900
+            │   ├── ActiveState: Boolean
+            │   └── InputNode: Temperature
+            └── SensorFaultCondition (ConditionType)
+                ├── Severity: 500
+                ├── ActiveState: Boolean
+                └── Message: String
 
 Behavior:
     - SensorModel provides a descriptive identifier for the sensor.
@@ -97,33 +100,44 @@ if __name__ == "__main__":
 
     # Add SensorModel variable (informational, non-numeric)
     sensor_model = sensor.add_variable(idx, "SensorModel", "Virtual DHT Sensor")
-    sensor_model.set_writable()
+    sensor_model.set_read_only()
 
     # Add Temperature variable
     temp = sensor.add_variable(idx, "Temperature", TEMP_MIN)
-    temp.set_writable()
+    temp.set_read_only()
 
     # Add Humidity variable
     hum = sensor.add_variable(idx, "Humidity", HUM_MIN)
-    hum.set_writable()
+    hum.set_read_only()
 
     # Add Calibrate() method
     sensor.add_method(idx, "Calibrate", calibrate, [], [ua.VariantType.Int32])
 
     # ----------------------------
-    # Add Conditions as proper AlarmConditionType
+    # Add Alarms
     # ----------------------------
-    alarm_type_node = server.get_node(ua.ObjectIds.AlarmConditionType)
+    alarms_folder = sensor.add_folder(idx, "Alarms")
 
-    overtemp_alarm = server.get_event_generator(alarm_type_node, sensor)
-    overtemp_alarm.event.Severity = 900
-    overtemp_alarm.event.Message = ua.LocalizedText("Temperature too high")
-    overtemp_alarm.event.SourceName = "TemperatureSensor"
+    # Create OverTemperatureAlarm node (child of the folder)
+    overtemp_node = alarms_folder.add_object(
+        idx,
+        "OverTemperatureAlarm",
+        ua.ObjectIds.AlarmConditionType
+    )
+    # Add standard properties
+    overtemp_node.add_property(idx, "Severity", 900)
+    overtemp_node.add_property(idx, "InputNode", temp.nodeid)
+    overtemp_node.add_property(idx, "SourceName", "TemperatureSensor")
 
-    sensor_fault_alarm = server.get_event_generator(alarm_type_node, sensor)
-    sensor_fault_alarm.event.Severity = 500
-    sensor_fault_alarm.event.Message = ua.LocalizedText("Sensor malfunction detected")
-    sensor_fault_alarm.event.SourceName = "TemperatureSensor"
+    # Create SensorFaultCondition node (child of the folder)
+    sensor_fault_node = alarms_folder.add_object(
+        idx,
+        "SensorFaultCondition",
+        ua.ObjectIds.ConditionType
+    )
+    # Add standard properties
+    sensor_fault_node.add_property(idx, "Severity", 500)
+    sensor_fault_node.add_property(idx, "SourceName", "TemperatureSensor")
 
     # ----------------------------
     # Start server
@@ -155,10 +169,15 @@ if __name__ == "__main__":
                 logger.info(f"Temperature: {current_temp}°C")
 
                 if current_temp > (TEMP_MIN + 0.9 * (TEMP_MAX - TEMP_MIN)):
+                    # Create fresh event generator for OverTemperatureAlarm
+                    overtemp_alarm = server.get_event_generator(ua.ObjectIds.AlarmConditionType, overtemp_node)
+                    overtemp_alarm.event.Severity = 900
+                    overtemp_alarm.event.Message = ua.LocalizedText("Temperature too high")
+                    overtemp_alarm.event.SourceName = "TemperatureSensor"
                     overtemp_alarm.trigger()
                     logger.info("OverTemperatureAlarm triggered")
 
-                # Schedule next temperature update with some jitter
+                # Schedule next temperature update with jitter
                 next_temp_time = now + random.uniform(0.8 * TEMP_SLEEP_AVG, 1.2 * TEMP_SLEEP_AVG)
 
             # Update humidity if its time
@@ -167,14 +186,20 @@ if __name__ == "__main__":
                 hum.set_value(current_hum)
                 logger.info(f"Humidity: {current_hum}%")
 
-                # Schedule next humidity update with some jitter
+                # Schedule next humidity update with jitter
                 next_hum_time = now + random.uniform(0.8 * HUM_SLEEP_AVG, 1.2 * HUM_SLEEP_AVG)
 
             # Trigger sensor fault if its time
             if now >= next_fault_time:
+                # Create fresh event generator for SensorFaultCondition
+                sensor_fault_alarm = server.get_event_generator(ua.ObjectIds.ConditionType, sensor_fault_node)
+                sensor_fault_alarm.event.Severity = 500
+                sensor_fault_alarm.event.Message = ua.LocalizedText("Sensor malfunction detected")
+                sensor_fault_alarm.event.SourceName = "TemperatureSensor"
                 sensor_fault_alarm.trigger()
                 logger.info("SensorFaultCondition triggered")
-                # Schedule next fault with some jitter
+
+                # Schedule next fault with jitter
                 next_fault_time = now + random.uniform(0.8 * SENSOR_FAULT_AVG, 1.2 * SENSOR_FAULT_AVG)
 
             # Sleep a short time to avoid busy-waiting

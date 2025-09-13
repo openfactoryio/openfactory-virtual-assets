@@ -29,14 +29,22 @@ The asset is configurable via environment variables.
 📁 Sensors
 └─ 📁 TemperatureSensor
    ├─ 📄 Variables
-   │   ├─ SensorModel (Writable)   
-   │   ├─ Temperature (Writable)
-   │   └─ Humidity (Writable)
+   │   ├─ SensorModel (Property, String, ReadOnly)
+   │   ├─ Temperature (Variable, Double, ReadOnly)
+   │   └─ Humidity (Variable, Double, ReadOnly)
    ├─ ⚙️ Methods
    │   └─ Calibrate()
+   │       ├─ InputArguments: None
+   │       └─ OutputArguments: StatusCode (Enum/UInt32)
    └─ 🔔 Alarms
-       ├─ OverTemperatureAlarm (Severity: 900)
-       └─ SensorFaultCondition (Severity: 500)
+       ├─ OverTemperatureAlarm (AlarmConditionType)
+       │   ├─ Severity: 900
+       │   ├─ ActiveState (Boolean)
+       │   └─ InputNode: Temperature
+       └─ SensorFaultCondition (ConditionType)
+           ├─ Severity: 500
+           ├─ ActiveState (Boolean)
+           └─ Message (String)
 ```
 
 - **SensorModel** – Descriptive string identifying the sensor
