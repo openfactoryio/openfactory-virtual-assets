@@ -2,9 +2,9 @@
 
 This project supports a pre-configured [Dev Container](https://containers.dev/) that:
 
-✅ Automatically installs Python 3.13 and development tools
-✅ Sets up the required environment variables
-✅ Installs and exposes the `openfactory-sdk` for managing local Kafka/ksqlDB instances
+- ✅ Automatically installs Python 3.13 and development tools
+- ✅ Sets up the required environment variables
+- ✅ Installs and exposes the `openfactory-sdk` for managing local Kafka/ksqlDB instances
 
 ---
 
