@@ -5,7 +5,7 @@ description = "A collection of virtual assets for OpenFactory."
 requires-python = ">=3.12"
 dependencies = [
     "MTCAdapters @ git+https://github.com/Demo-Smart-Factory-Concordia-University/MTCAdapters.git",
-    "opcua",
+    "asyncua",
 ]
 
 [project.optional-dependencies]
