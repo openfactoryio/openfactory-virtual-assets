@@ -36,7 +36,7 @@ RUN apt-get update && apt-get install -y git \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies
-RUN pip install --no-cache-dir opcua
+RUN pip install --no-cache-dir asyncua
 
 # Set working directory
 WORKDIR /home/$UNAME
