@@ -1,6 +1,7 @@
 # Virtual OPC UA Temperature Sensor
 
-This virtual asset simulates a temperature sensor for OpenFactory using OPC UA.
+This virtual asset simulates one or more temperature sensors for OpenFactory using OPC UA.
+Each sensor exposes temperature, humidity, a calibration method, and alarm conditions.
 
 ## 📂 Contents
 
@@ -12,9 +13,10 @@ This virtual asset simulates a temperature sensor for OpenFactory using OPC UA.
 The asset is configurable via environment variables.
 
 | Variable           | Description                                          | Default                                      |
-| ----------------- | ----------------------------------------------------- | -------------------------------------------- |
+| ------------------ | ---------------------------------------------------- | -------------------------------------------- |
 | `OPCUA_ENDPOINT`   | OPC UA server endpoint                               | `opc.tcp://127.0.0.1:4840/freeopcua/server/` |
 | `OPCUA_NAMESPACE`  | OPC UA namespace URI                                 | `http://examples.openfactory.local/opcua`    |
+| `NUM_SENSORS`      | Number of sensors to expose                          | 2                                            |
 | `TEMP_MIN`         | Minimum temperature value                            | 21.0                                         |
 | `TEMP_MAX`         | Maximum temperature value                            | 25.0                                         |
 | `HUM_MIN`          | Minimum humidity value                               | 40.0                                         |
@@ -25,46 +27,55 @@ The asset is configurable via environment variables.
 
 ## 📁 OPC UA Server Structure
 
+If `NUM_SENSORS=2`, the structure looks like this:
+
 ```
 📁 Sensors
-└─ 📁 TemperatureSensor
-   ├─ 📄 Variables
-   │   ├─ SensorModel (Property, String, ReadOnly)
-   │   ├─ Temperature (Variable, Double, ReadOnly)
-   │   └─ Humidity (Variable, Double, ReadOnly)
-   ├─ ⚙️ Methods
-   │   └─ Calibrate()
-   │       ├─ InputArguments: None
-   │       └─ OutputArguments: StatusCode (Enum/UInt32)
-   └─ 🔔 Alarms
-       ├─ OverTemperatureAlarm (AlarmConditionType)
-       │   ├─ Severity: 900
-       │   ├─ ActiveState (Boolean)
-       │   └─ InputNode: Temperature
-       └─ SensorFaultCondition (ConditionType)
-           ├─ Severity: 500
-           ├─ ActiveState (Boolean)
-           └─ Message (String)
+├─ 📁 TemperatureSensor1
+│  ├─ 📄 Variables
+│  │   ├─ SensorModel (Property, String, ReadOnly)
+│  │   ├─ Temperature (Variable, Double, ReadOnly)
+│  │   └─ Humidity (Variable, Double, ReadOnly)
+│  ├─ ⚙️ Methods
+│  │   └─ Calibrate()
+│  │       ├─ InputArguments: None
+│  │       └─ OutputArguments: StatusCode (Enum/UInt32)
+│  └─ 🔔 Alarms
+│      ├─ OverTemperatureAlarm (AlarmConditionType)
+│      │   ├─ Severity: 900
+│      │   ├─ ActiveState (Boolean)
+│      │   └─ InputNode: Temperature
+│      └─ SensorFaultCondition (ConditionType)
+│          ├─ Severity: 500
+│          ├─ ActiveState (Boolean)
+│          └─ Message (String)
+│
+└─ 📁 TemperatureSensor2
+   └─ (same structure as above)
 ```
 
-- **SensorModel** – Descriptive string identifying the sensor
-- **Temperature** – Current temperature reading (°C). Updates at intervals around `TEMP_SLEEP_AVG`.
-- **Humidity** – Current humidity reading (%). Updates at intervals around `HUM_SLEEP_AVG`.
-- **Calibrate()** – Simulated calibration method; returns status code `0`.
-- **OverTemperatureAlarm** – Triggered when temperature exceeds 90% of configured range.
-- **SensorFaultCondition** – Triggered at intervals around `SENSOR_FAULT_AVG` to simulate sensor errors.
+### Node behaviors
+
+* **SensorModel** – Descriptive string identifying the sensor (e.g., `Virtual DHT TemperatureSensor3`).
+* **Temperature** – Current temperature reading (°C). Updates around `TEMP_SLEEP_AVG`.
+* **Humidity** – Current humidity reading (%). Updates around `HUM_SLEEP_AVG`.
+* **Calibrate()** – Simulated calibration method; always returns status code `0` (success).
+* **OverTemperatureAlarm** – Triggered when temperature exceeds 90% of the configured range.
+* **SensorFaultCondition** – Triggered around `SENSOR_FAULT_AVG` intervals to simulate random sensor errors.
 
 ## 🚀 Deploying
 
-The virtual sensor can be deployed either on a local machine or on the OpenFactory cluster.
+The virtual sensor can be deployed on a local machine or in the OpenFactory cluster.
 
 ### 🖥️ Local machine
-Deploy the virtual sensor from the repository of OpenFactory as a Docker container:
+
+Run as a Docker container:
+
 ```bash
-docker run -d --name virtual-opcua-sensor -p 4840:4840 ghcr.io/openfactoryio/virtual-opcua-sensor
+docker run -d --name virtual-opcua-sensor -p 4840:4840 -e NUM_SENSORS=5 ghcr.io/openfactoryio/virtual-opcua-sensor
 ```
 
-or use this Docker Compose file:
+or with Docker Compose:
 
 ```yaml
 services:
@@ -73,22 +84,23 @@ services:
     container_name: virtual-opcua-sensor
     ports:
       - "4840:4840"
+    environment:
+      - NUM_SENSORS=5
 ```
 
-and start it with:
+Start it with:
 
 ```bash
 docker compose up -d
 ```
 
-> Note: you can select a specific version of the sensor. For example `ghcr.io/openfactoryio/virtual-opcua-sensor:v0.4.1`.
-> You should choose the same version as the OpenFactory version you are using (as displayed by `ofa version`)
+👉 Use `NUM_SENSORS` to control how many virtual sensors are created.
 
-To connect the virtual sensor to OpenFactory, store the following config in `sensor.yml`:
+To connect to OpenFactory, create `sensor.yml` (for the first sensor):
 
 ```yaml
 devices:
-  vtempsens:
+  vtempsens1:
     uuid: VIRTUAL-OPCUA-SENS-001
 
     connector:
@@ -99,7 +111,7 @@ devices:
         namespace_uri: http://examples.openfactory.local/opcua
 
       device:
-        path: Sensors/TemperatureSensor
+        path: Sensors/TemperatureSensor1
 
         variables:
           temp: Temperature
@@ -110,78 +122,37 @@ devices:
           calibrate: Calibrate
 ```
 
-where `<ip-address-local-machine>` is the IP address of the machine on which your virtual sensor is running.
-If you deployed the virtual sensor in the devcontainer of this repo, then you can use:
-
-```yaml
-uri: opc.tcp://${CONTAINER_IP}:4840/freeopcua/server/
-```
-
-Connect the virtual sensor to OpenFactory with:
-
-```bash
-ofa device up sensor.yml
-```
+For multiple sensors, just duplicate the `devices` section and change the UUID + path (e.g., `TemperatureSensor2`).
 
 ---
 
 ### ☁️ On the OpenFactory cluster
 
-To deploy the virtual sensor as a service on the OpenFactory cluster, run from a manager node:
+Deploy as a Swarm service:
 
 ```bash
 docker service create \
   --name virtual-opcua-sensor \
-  --network factory-net \
   --publish 4840:4840 \
+  --env NUM_SENSORS=3 \
   ghcr.io/openfactoryio/virtual-opcua-sensor
-```
-
-To connect the virtual sensor to OpenFactory, store the following config in `sensor.yml`:
-
-```yaml
-devices:
-  vtempsens:
-    uuid: VIRTUAL-OPCUA-SENS-001
-
-    connector:
-      type: opcua
-
-      server:
-        uri: opc.tcp://virtual-opcua-sensor:4840/freeopcua/server/
-        namespace_uri: http://examples.openfactory.local/opcua
-
-      device:
-        path: Sensors/TemperatureSensor
-
-        variables:
-          temp: Temperature
-          hum: Humidity
-          sensor_model: SensorModel
-
-        methods:
-          calibrate: Calibrate
-```
-and run:
-
-```bash
-ofa device up sensor.yml
 ```
 
 ## 🛠 Development
 
-Make sure you are in the devcontainer and that the Kafka cluster is running:
+Inside the devcontainer, make sure Kafka is running:
 
 ```bash
 spinup
 ```
 
-You can run the virtual sensor directly for testing it:
-```
+Run the sensor locally for testing:
+
+```bash
 python virtual_assets/opcua_sensor/opcua_device.py
 ```
 
-To build the Docker image for the virtual temperature sensor:
+Build the Docker image:
 
 ```bash
 docker build -t virtual-opcua-sensor ./virtual_assets/opcua_sensor
