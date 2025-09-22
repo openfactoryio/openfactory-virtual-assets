@@ -124,6 +124,11 @@ devices:
 
 For multiple sensors, just duplicate the `devices` section and change the UUID + path (e.g., `TemperatureSensor2`).
 
+To connect your sensors to OpenFactory:
+```bash
+ofa device up sensor.yml
+```
+
 ---
 
 ### ☁️ On the OpenFactory cluster
