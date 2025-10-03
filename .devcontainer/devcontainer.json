@@ -1,8 +1,8 @@
 {
   "name": "OpenFactory-VirtualAssets — Collection of virtual assets for OpenFactory",
-  "image": "mcr.microsoft.com/devcontainers/python:3.13-bookworm",
+  "image": "mcr.microsoft.com/devcontainers/python:2.0.2-3.13-bullseye",
   "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2.12.4": {},
     "ghcr.io/openfactoryio/openfactory-sdk/infra": {
       "openfactory-version": "main"
     }
