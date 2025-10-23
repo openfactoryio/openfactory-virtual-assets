@@ -151,6 +151,12 @@ Inside the devcontainer, make sure Kafka is running:
 spinup
 ```
 
+and the OpenFactory OPC UA Connector is deployed:
+
+```bash
+opcua-connector-up
+```
+
 Run the sensor locally for testing:
 
 ```bash

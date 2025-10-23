@@ -5,6 +5,9 @@
     "ghcr.io/devcontainers/features/docker-in-docker:2.12.4": {},
     "ghcr.io/openfactoryio/openfactory-sdk/infra": {
       "openfactory-version": "main"
+    },
+    "ghcr.io/openfactoryio/openfactory-sdk/opcua-connector": {
+      "opcua-connector-version": "latest"
     }
   },
   "customizations": {
