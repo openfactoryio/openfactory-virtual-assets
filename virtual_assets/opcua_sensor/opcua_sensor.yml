@@ -13,19 +13,22 @@ devices:
       type: opcua
 
       server:
-        uri: opc.tcp://${CONTAINER_IP}:4840/freeopcua/server/
-        namespace_uri: http://examples.openfactory.local/opcua
+        uri: opc.tcp://${CONTAINER_IP}:4840/freeopcuas/server/
 
-      device:
-        path: Sensors/TemperatureSensor1
+      variables:
+        temp:
+          node_id: ns=2;i=4
+          tag: Temperature
+        hum:
+          node_id: ns=2;i=5
+          tag: Humidity
+        sensor_model: 
+          node_id: ns=2;i=3
+          tag: SensorModel
 
-        variables:
-          temp: Temperature
-          hum: Humidity
-          sensor_model: SensorModel
-
-        methods:
-          calibrate: Calibrate
+      events:
+        sensor_events:
+          node_id: ns=2;i=2
 
   vtempsens2:
     uuid: VIRTUAL-OPCUA-SENS-002
@@ -34,16 +37,19 @@ devices:
       type: opcua
 
       server:
-        uri: opc.tcp://${CONTAINER_IP}:4840/freeopcua/server/
-        namespace_uri: http://examples.openfactory.local/opcua
+        uri: opc.tcp://${CONTAINER_IP}:4840/freeopcuas/server/
 
-      device:
-        path: Sensors/TemperatureSensor2
+      variables:
+        temp:
+          node_id: ns=2;i=10
+          tag: Temperature
+        hum:
+          node_id: ns=2;i=11
+          tag: Humidity
+        sensor_model: 
+          node_id: ns=2;i=9
+          tag: SensorModel
 
-        variables:
-          temp: Temperature
-          hum: Humidity
-          sensor_model: SensorModel
-
-        methods:
-          calibrate: Calibrate
+      events:
+        sensor_events:
+          node_id: ns=2;i=8
