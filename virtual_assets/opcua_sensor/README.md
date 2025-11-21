@@ -107,22 +107,29 @@ devices:
       type: opcua
 
       server:
-        uri: opc.tcp://<ip-address-local-machine>:4840/freeopcua/server/
-        namespace_uri: http://examples.openfactory.local/opcua
+        uri: opc.tcp://<your-host-ip>:4840/freeopcuas/server/
 
-      device:
-        path: Sensors/TemperatureSensor1
+      variables:
+        temp:
+          node_id: ns=2;i=4
+          tag: Temperature
+        hum:
+          node_id: ns=2;i=5
+          tag: Humidity
+        sensor_model: 
+          node_id: ns=2;i=3
+          tag: SensorModel
 
-        variables:
-          temp: Temperature
-          hum: Humidity
-          sensor_model: SensorModel
-
-        methods:
-          calibrate: Calibrate
+      events:
+        sensor_events:
+          node_id: ns=2;i=2
+        
 ```
+where `<your-host-ip>` is the IP address of the host on which you deployed the virtual sensor.
+If you are deploying inside the Dev Container of this repository, you can use `${CONTAINER_IP}` for your host IP address.
 
-For multiple sensors, just duplicate the `devices` section and change the UUID + path (e.g., `TemperatureSensor2`).
+For multiple sensors, just duplicate the `vtempsens1` section and change the UUID and the node IDs of the variables and events.
+For each new sensore the index, in the node ID needs to be incremented by 6.
 
 To connect your sensors to OpenFactory:
 ```bash
