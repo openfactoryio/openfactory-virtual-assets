@@ -27,20 +27,20 @@ The asset is configurable via environment variables.
 
 ## 📁 OPC UA Server Structure
 
-If `NUM_SENSORS=2`, the structure looks like this:
+If `NUM_SENSORS=2`, the structure looks like this (under `0:Root/0:Objects`):
 
 ```
-📁 Sensors
-├─ 📁 TemperatureSensor1
+📁 2:Sensors
+├─ 📁 2:TemperatureSensor1
 │  ├─ 📄 Variables
-│  │   ├─ SensorModel (Property, String, ReadOnly)
-│  │   ├─ Temperature (Variable, Double, ReadOnly)
-│  │   └─ Humidity (Variable, Double, ReadOnly)
+│  │   ├─ 2:SensorModel (Property, String, ReadOnly)
+│  │   ├─ 2:Temperature (Variable, Double, ReadOnly)
+│  │   └─ 2:Humidity (Variable, Double, ReadOnly)
 │  ├─ ⚙️ Methods
-│  │   └─ Calibrate()
+│  │   └─ 2:Calibrate()
 │  │       ├─ InputArguments: None
 │  │       └─ OutputArguments: StatusCode (Enum/UInt32)
-│  └─ 🔔 Alarms
+│  └─ 🔔 Events
 │      ├─ OverTemperatureAlarm (AlarmConditionType)
 │      │   ├─ Severity: 900
 │      │   ├─ ActiveState (Boolean)
@@ -50,7 +50,7 @@ If `NUM_SENSORS=2`, the structure looks like this:
 │          ├─ ActiveState (Boolean)
 │          └─ Message (String)
 │
-└─ 📁 TemperatureSensor2
+└─ 📁 2:TemperatureSensor2
    └─ (same structure as above)
 ```
 
@@ -130,6 +130,34 @@ If you are deploying inside the Dev Container of this repository, you can use `$
 
 For multiple sensors, just duplicate the `vtempsens1` section and change the UUID and the node IDs of the variables and events.
 For each new sensore the index, in the node ID needs to be incremented by 6.
+
+Alternatively use the `browse_path` to indentify the OPC UA nodes instead of the `node_id`:
+```
+devices:
+  vtempsens1:
+    uuid: VIRTUAL-OPCUA-SENS-001
+
+    connector:
+      type: opcua
+
+      server:
+        uri: opc.tcp://<your-host-ip>:4840/freeopcuas/server/
+
+      variables:
+        temp:
+          browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor1/2:Temperature
+          tag: Temperature
+        hum:
+          browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor1/2:Humidity
+          tag: Humidity
+        sensor_model: 
+          browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor1/2:SensorModel
+          tag: SensorModel
+
+      events:
+        sensor_events:
+          browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor1
+```
 
 To connect your sensors to OpenFactory:
 ```bash
