@@ -17,18 +17,18 @@ devices:
 
       variables:
         temp:
-          node_id: ns=2;i=4
+          browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor1/2:Temperature
           tag: Temperature
         hum:
-          node_id: ns=2;i=5
+          browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor1/2:Humidity
           tag: Humidity
         sensor_model: 
-          node_id: ns=2;i=3
+          browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor1/2:SensorModel
           tag: SensorModel
 
       events:
         sensor_events:
-          node_id: ns=2;i=2
+          browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor1
 
   vtempsens2:
     uuid: VIRTUAL-OPCUA-SENS-002
@@ -41,15 +41,15 @@ devices:
 
       variables:
         temp:
-          node_id: ns=2;i=10
+          browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor2/2:Temperature
           tag: Temperature
         hum:
-          node_id: ns=2;i=11
+          browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor2/2:Humidity
           tag: Humidity
         sensor_model: 
-          node_id: ns=2;i=9
+          browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor2/2:SensorModel
           tag: SensorModel
 
       events:
         sensor_events:
-          node_id: ns=2;i=8
+          browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor2
