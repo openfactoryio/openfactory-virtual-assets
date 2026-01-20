@@ -1,7 +1,11 @@
 """
-Configurable OPC UA server exposing multiple TemperatureSensors,
-each with Temperature, Humidity, a Calibrate() method,
-and AlarmConditionType conditions.
+Configurable OPC UA server exposing multiple TemperatureSensors.
+
+Each TemperatureSensor exposes:
+  - Temperature and Humidity variables
+  - A writable configuration variable (TemperatureUnit)
+  - A Calibrate() method
+  - AlarmConditionType events (OverTemperature, SensorFault)
 
 Environment Variables:
     OPCUA_ENDPOINT       (default: opc.tcp://0.0.0:4840/freeopcua/server/)
@@ -21,9 +25,10 @@ Objects Node
 └── Sensors (Object)
     ├── TemperatureSensor1 (Object)
     │   ├── 📄 Variables
-    │   │   ├── SensorModel (Property, String, ReadOnly)
-    │   │   ├── Temperature (Variable, Double, ReadOnly)
-    │   │   └── Humidity (Variable, Double, ReadOnly)
+    │   │   ├── SensorModel        (Property, String, ReadOnly)
+    │   │   ├── Temperature        (Variable, Double, ReadOnly)
+    │   │   ├── Humidity           (Variable, Double, ReadOnly)
+    │   │   └── TemperatureUnit    (Variable, String, Writable: "C" | "K")
     │   └── ⚙️ Methods
     │       └── Calibrate()
     │           ├── InputArguments: None
@@ -48,6 +53,8 @@ Events (per sensor):
 Behavior:
     - Each TemperatureSensor has its own SensorModel identifier.
     - Temperature and Humidity values are updated periodically with configurable average intervals.
+    - TemperatureUnit is a writable configuration variable ("C" or "K").
+    - The exposed Temperature value is converted according to TemperatureUnit.
     - OverTemperatureAlarm triggers if temperature exceeds 90% of defined range.
     - SensorFaultCondition triggers at random intervals based on SENSOR_FAULT_AVG.
 """
@@ -160,6 +167,9 @@ async def create_sensor(
     sensor_model = await sensor.add_variable(idx, "SensorModel", f"Virtual DHT {sensor_name}")
     await sensor_model.set_writable(False)
 
+    temp_unit = await sensor.add_variable(idx, "TemperatureUnit", "C", ua.VariantType.String)
+    await temp_unit.set_writable(True)
+
     temp = await sensor.add_variable(idx, "Temperature", TEMP_MIN)
     await temp.set_writable(False)
 
@@ -189,6 +199,7 @@ async def create_sensor(
         "name": sensor_name,
         "temp": temp,
         "hum": hum,
+        "temp_unit": temp_unit,
         "overtemp_alarm": overtemp_alarm,
         "fault_alarm": fault_alarm,
         "temp_range": temp_range,
@@ -262,11 +273,17 @@ async def main():
 
                     # Temperature
                     if now >= next_temp_time[s["name"]]:
-                        current_temp = round(random.uniform(TEMP_MIN, TEMP_MAX), 1)
-                        await s["temp"].write_value(current_temp)
-                        logger.info(f"{s['name']} Temperature: {current_temp}°C")
+                        temp_c = round(random.uniform(TEMP_MIN, TEMP_MAX), 1)
+                        unit = await s["temp_unit"].read_value()
+                        if unit == "K":
+                            reported_temp = round(temp_c + 273.15, 2)
+                        else:  # default to Celsius
+                            reported_temp = temp_c
 
-                        if current_temp > (TEMP_MIN + 0.9 * (TEMP_MAX - TEMP_MIN)):
+                        await s["temp"].write_value(reported_temp)
+                        logger.info(f"{s['name']} Temperature: {reported_temp}°{unit}")
+
+                        if temp_c > (TEMP_MIN + 0.9 * (TEMP_MAX - TEMP_MIN)):
                             await s["overtemp_alarm"].trigger()
                             logger.info(f"{s['name']} OverTemperatureAlarm triggered")
 

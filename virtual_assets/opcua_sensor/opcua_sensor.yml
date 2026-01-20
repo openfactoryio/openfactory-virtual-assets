@@ -22,6 +22,9 @@ devices:
         hum:
           browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor1/2:Humidity
           tag: Humidity
+        temp_unit:
+          browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor1/2:TemperatureUnit
+          tag: TemperatureUnit
         sensor_model: 
           browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor1/2:SensorModel
           tag: SensorModel
@@ -46,6 +49,9 @@ devices:
         hum:
           browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor2/2:Humidity
           tag: Humidity
+        temp_unit:
+          browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor1/2:TemperatureUnit
+          tag: TemperatureUnit
         sensor_model: 
           browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor2/2:SensorModel
           tag: SensorModel
