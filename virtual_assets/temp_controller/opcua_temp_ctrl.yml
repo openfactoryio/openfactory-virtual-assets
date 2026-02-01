@@ -1,0 +1,95 @@
+# ---------------------------------------------------------------------------------------
+# 🏭 OpenFactory Asset configuration file for the virtual OPC UA temperature controller
+#
+# Deploy with:
+#   ofa device up virtual_assets/temp_controller/opcua_temp_ctrl.yml
+# ---------------------------------------------------------------------------------------
+
+devices:
+  vtmpctrl:
+    uuid: VIRTUAL-OPCUA-TEMP-OPCUA_TEMP-CTRL
+
+    connector:
+      type: opcua
+
+      server:
+        uri: opc.tcp://${CONTAINER_IP}:4840/freeopcua/server/
+
+      variables:
+        # --- General ---
+        model: 
+          browse_path: 0:Root/0:Objects/2:TemperatureController/2:Model
+          tag: Hardware.Model
+        firmeware_version: 
+          browse_path: 0:Root/0:Objects/2:TemperatureController/2:SoftwareRevision
+          tag: Firmeware.Version
+        firmeware_license: 
+          browse_path: 0:Root/0:Objects/2:TemperatureController/2:License
+          tag: Firmware.License
+        manufacturer: 
+          browse_path: 0:Root/0:Objects/2:TemperatureController/2:Manufacturer
+          tag: Hardware.Manufacturer
+
+        # --- State folder ---
+        current_temp:
+          browse_path: 0:Root/0:Objects/2:TemperatureController/2:State/2:CurrentTemperature
+          tag: Temperature
+          access_level: ro
+        output:
+          browse_path: 0:Root/0:Objects/2:TemperatureController/2:State/2:ControlOutput
+          tag: Controller.Output
+          access_level: ro
+        last_update:
+          browse_path: 0:Root/0:Objects/2:TemperatureController/2:State/2:LastUpdateTime
+          tag: LastUpdateTime
+          access_level: ro
+
+        # --- Configuration folder ---
+        setpoint:
+          browse_path: 0:Root/0:Objects/2:TemperatureController/2:Configuration/2:SetPoint
+          tag: SetPoint
+          access_level: rw
+        mode:
+          browse_path: 0:Root/0:Objects/2:TemperatureController/2:Configuration/2:Mode
+          tag: ControllerMode
+          access_level: rw
+
+        # --- PID subtree ---
+        kp:
+          browse_path: 0:Root/0:Objects/2:TemperatureController/2:Configuration/2:PID/2:Proportional/2:Gain
+          tag: Controller.Proportional.Gain
+          access_level: rw
+        ki:
+          browse_path: 0:Root/0:Objects/2:TemperatureController/2:Configuration/2:PID/2:Integral/2:Gain
+          tag: Controller.Integral.Gain
+          access_level: rw
+        kd:
+          browse_path: 0:Root/0:Objects/2:TemperatureController/2:Configuration/2:PID/2:Derivative/2:Gain
+          tag: Controller.Derivative.Gain
+          access_level: rw
+        prop_enabled:
+          browse_path: 0:Root/0:Objects/2:TemperatureController/2:Configuration/2:PID/2:Proportional/2:Enabled
+          tag: Controller.Proportional.Enabled
+          access_level: rw
+        integ_enabled:
+          browse_path: 0:Root/0:Objects/2:TemperatureController/2:Configuration/2:PID/2:Integral/2:Enabled
+          tag: Controller.Integral.Enabled
+          access_level: rw
+        deriv_enabled:
+          browse_path: 0:Root/0:Objects/2:TemperatureController/2:Configuration/2:PID/2:Derivative/2:Enabled
+          tag: Controller.Derivative.Enabled
+          access_level: rw
+        windup:
+          browse_path: 0:Root/0:Objects/2:TemperatureController/2:Configuration/2:PID/2:Integral/2:WindupLimit
+          tag: Controller.Integral.Windup
+          access_level: rw
+
+        # --- Output constraints ---
+        output_min:
+          browse_path: 0:Root/0:Objects/2:TemperatureController/2:OutputConstraints/2:OutputMin
+          tag: OutputMin
+          access_level: rw
+        output_max:
+          browse_path: 0:Root/0:Objects/2:TemperatureController/2:OutputConstraints/2:OutputMax
+          tag: OutputMax
+          access_level: rw
