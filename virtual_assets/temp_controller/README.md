@@ -137,7 +137,7 @@ The virtual temperature controller can be deployed on a local machine or in the 
 Run as a Docker container:
 
 ```bash
-docker run -d -p 4840:4840 virtual-opcua-temp-controller ghcr.io/openfactoryio/virtual-opcua-temp-controller
+docker run -d -p 4840:4840 --name virtual-opcua-temp-controller ghcr.io/openfactoryio/virtual-opcua-temp-controller
 ```
 
 To connect your sensors to OpenFactory:
