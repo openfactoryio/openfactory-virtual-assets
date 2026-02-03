@@ -7,7 +7,7 @@
 
 devices:
   vtmpctrl:
-    uuid: VIRTUAL-OPCUA-TEMP-OPCUA_TEMP-CTRL
+    uuid: VIRTUAL-OPCUA-TEMP-CTRL
 
     connector:
       type: opcua
