@@ -150,7 +150,7 @@ async def main() -> None:
         PLANT_K_H (float): Heater gain (max heater power per unit command) [W/unit]. Default: 100.0
     """
     # --- Config ---
-    endpoint = os.getenv("OPCUA_ENDPOINT", "opc.tcp://0.0.0:4840/freeopcua/server/")
+    endpoint = os.getenv("OPCUA_ENDPOINT", "opc.tcp://0.0.0.0:4840")
     namespace_uri = os.getenv("OPCUA_NAMESPACE", "http://examples.openfactory.local/opcua")
     UPDATE_INTERVAL = float(os.getenv("UPDATE_INTERVAL", 1.0))
     DT_SIM = 0.1
