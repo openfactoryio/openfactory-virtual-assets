@@ -25,12 +25,16 @@ LABEL documentation="https://github.com/openfactoryio/openfactory-virtual-assets
 ARG UNAME=vopcua_temp_ctrl
 ARG UID=1300
 ARG GID=1300
+ARG VERSION=dev
 
 # Prevent Python from generating .pyc files
 ENV PYTHONDONTWRITEBYTECODE=1
 
 # Turn off buffering for easier container logging
 ENV PYTHONUNBUFFERED=1
+
+# Set VERSION based on build arg
+ENV VERSION=${VERSION}
 
 # Install dependencies and create non-root user
 RUN apt-get update && apt-get install -y git \
