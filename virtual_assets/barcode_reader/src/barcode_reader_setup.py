@@ -235,8 +235,10 @@ async def create_barcode_reader(server: Server, idx: int, parent: Node) -> Dict[
         "last_code": last_code,
         "last_timestamp": last_timestamp,
         "read_success": read_success,
+        "device_ready": device_ready,
         "failure_rate": failure_rate,
         "no_read_event": no_read_event,
+        "reader_error_event": reader_error_event,
         "mode": mode,
     }
 
