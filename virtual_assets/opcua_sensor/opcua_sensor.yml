@@ -15,6 +15,11 @@ devices:
       server:
         uri: opc.tcp://${CONTAINER_IP}:4840/freeopcuas/server/
 
+      constants:
+        sensor_model: 
+          browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor1/2:SensorModel
+          tag: SensorModel
+
       variables:
         temp:
           browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor1/2:Temperature
@@ -25,9 +30,6 @@ devices:
         temp_unit:
           browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor1/2:TemperatureUnit
           tag: TemperatureUnit
-        sensor_model: 
-          browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor1/2:SensorModel
-          tag: SensorModel
 
       events:
         sensor_events:
@@ -42,6 +44,11 @@ devices:
       server:
         uri: opc.tcp://${CONTAINER_IP}:4840/freeopcuas/server/
 
+      constants:
+        sensor_model: 
+          browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor2/2:SensorModel
+          tag: SensorModel
+
       variables:
         temp:
           browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor2/2:Temperature
@@ -52,9 +59,6 @@ devices:
         temp_unit:
           browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor1/2:TemperatureUnit
           tag: TemperatureUnit
-        sensor_model: 
-          browse_path: 0:Root/0:Objects/2:Sensors/2:TemperatureSensor2/2:SensorModel
-          tag: SensorModel
 
       events:
         sensor_events:

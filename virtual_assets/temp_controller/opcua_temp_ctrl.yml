@@ -15,8 +15,8 @@ devices:
       server:
         uri: opc.tcp://${CONTAINER_IP}:4840/freeopcua/server/
 
-      variables:
-        # --- General ---
+      constants:
+
         model: 
           browse_path: 0:Root/0:Objects/2:TemperatureController/2:Model
           tag: Hardware.Model
@@ -29,6 +29,8 @@ devices:
         manufacturer: 
           browse_path: 0:Root/0:Objects/2:TemperatureController/2:Manufacturer
           tag: Hardware.Manufacturer
+
+      variables:
 
         # --- State folder ---
         current_temp:
