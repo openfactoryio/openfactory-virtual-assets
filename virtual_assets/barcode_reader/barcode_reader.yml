@@ -15,9 +15,8 @@ devices:
       server:
         uri: opc.tcp://${CONTAINER_IP}:4840
 
-      variables:
+      constants:
 
-        # --- General device info ---
         model:
           browse_path: 0:Root/0:Objects/2:BarcodeReader/2:Model
           tag: Hardware.Model
@@ -33,6 +32,8 @@ devices:
         manufacturer:
           browse_path: 0:Root/0:Objects/2:BarcodeReader/2:Manufacturer
           tag: Hardware.Manufacturer
+
+      variables:
 
         # --- State ---
         last_code:
