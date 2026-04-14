@@ -165,13 +165,13 @@ async def create_barcode_reader(server: Server, idx: int, parent: Node) -> Dict[
     barcode_reader = await parent.add_object(idx, "BarcodeReader")
 
     # --- General info ---
-    model = await barcode_reader.add_variable(idx, "Model", "Virtual Barcode Reader")
+    model = await barcode_reader.add_variable(idx, "Model", ua.LocalizedText("Virtual Barcode Reader", "en"))
     await model.set_writable(False)
     version = await barcode_reader.add_variable(idx, "SoftwareRevision", Config.VERSION)
     await version.set_writable(False)
-    manufacturer = await barcode_reader.add_variable(idx, "Manufacturer", "OpenFactoryIO")
+    manufacturer = await barcode_reader.add_variable(idx, "Manufacturer", ua.LocalizedText("OpenFactoryIO", "en"))
     await manufacturer.set_writable(False)
-    license = await barcode_reader.add_variable(idx, "License", "Polyform Noncommercial License 1.0.0")
+    license = await barcode_reader.add_variable(idx, "License", ua.LocalizedText("Polyform Noncommercial License 1.0.0", "en"))
     await license.set_writable(False)
 
     # --- State ---
