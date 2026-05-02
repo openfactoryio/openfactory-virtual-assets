@@ -1,5 +1,5 @@
 # OpenFactory Virtual Assets
-
+[![version](https://img.shields.io/github/release/openfactoryio/openfactory-core.svg?color=blue)](https://github.com/openfactoryio/openfactory-virtual-assets/releases)
 [![Dev Container Ready](https://img.shields.io/badge/devcontainer-ready-green?logo=visualstudiocode\&labelColor=2c2c2c)](.devcontainer/README.md) <img src="https://img.shields.io/badge/python-3.13-blue?logo=python&logoColor=white" alt="Python Version" />
 ![License](https://img.shields.io/github/license/openfactoryio/openfactory-virtual-assets?style=flat-square)
 
