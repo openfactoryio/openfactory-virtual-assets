@@ -256,14 +256,26 @@ async def main():
         logger.info("---------------------------------------------------")
 
         # Timers per sensor
-        next_temp_time = {s["name"]: time.time() for s in sensors}
-        next_hum_time = {s["name"]: time.time() for s in sensors}
+        next_temp_time = {
+            s["name"]: time.time() + random.uniform(0, TEMP_SLEEP_AVG)
+            for s in sensors
+        }
+        next_hum_time = {
+            s["name"]: time.time() + random.uniform(0, HUM_SLEEP_AVG)
+            for s in sensors
+        }
         next_fault_time = {
-            s["name"]: time.time() + random.uniform(0.8 * SENSOR_FAULT_AVG, 1.2 * SENSOR_FAULT_AVG)
+            s["name"]: time.time() + random.uniform(0, SENSOR_FAULT_AVG)
             for s in sensors
         }
 
         try:
+            last_report = time.time()
+            nbr_cycles = 0
+            fired_temp = 0
+            fired_hum = 0
+            fired_fault = 0
+
             while True:
                 now = time.time()
 
@@ -281,30 +293,48 @@ async def main():
                             reported_temp = temp_c
 
                         await s["temp"].write_value(reported_temp)
-                        logger.info(f"{s['name']} Temperature: {reported_temp}°{unit}")
+                        logger.debug(f"{s['name']} Temperature: {reported_temp}°{unit}")
+                        fired_temp += 1
 
                         if temp_c > (TEMP_MIN + 0.9 * (TEMP_MAX - TEMP_MIN)):
                             await s["overtemp_alarm"].trigger()
-                            logger.info(f"{s['name']} OverTemperatureAlarm triggered")
+                            logger.debug(f"{s['name']} OverTemperatureAlarm triggered")
 
-                        next_temp_time[s["name"]] = now + random.uniform(0.8 * TEMP_SLEEP_AVG, 1.2 * TEMP_SLEEP_AVG)
+                        next_temp_time[s["name"]] += random.uniform(0.8 * TEMP_SLEEP_AVG, 1.2 * TEMP_SLEEP_AVG)
 
                     # Humidity
                     if now >= next_hum_time[s["name"]]:
                         current_hum = round(random.uniform(HUM_MIN, HUM_MAX), 1)
                         await s["hum"].write_value(current_hum)
-                        logger.info(f"{s['name']} Humidity: {current_hum}%")
-
-                        next_hum_time[s["name"]] = now + random.uniform(0.8 * HUM_SLEEP_AVG, 1.2 * HUM_SLEEP_AVG)
+                        logger.debug(f"{s['name']} Humidity: {current_hum}%")
+                        fired_hum += 1
+                        next_hum_time[s["name"]] += random.uniform(0.8 * HUM_SLEEP_AVG, 1.2 * HUM_SLEEP_AVG)
 
                     # Fault
                     if now >= next_fault_time[s["name"]]:
                         await s["fault_alarm"].trigger()
-                        logger.info(f"{s['name']} SensorFaultCondition triggered")
-                        next_fault_time[s["name"]] = now + random.uniform(0.8 * SENSOR_FAULT_AVG, 1.2 * SENSOR_FAULT_AVG)
+                        logger.debug(f"{s['name']} SensorFaultCondition triggered")
+                        fired_fault += 1
+                        next_fault_time[s["name"]] += random.uniform(0.8 * SENSOR_FAULT_AVG, 1.2 * SENSOR_FAULT_AVG)
+
+                # Log number of fired events
+                nbr_cycles += 1
+                if now - last_report >= 1.0:
+                    logger.info(
+                        f"Avg number of fired events per batch: "
+                        f"temp={fired_temp/nbr_cycles:.2f} "
+                        f"hum={fired_hum/nbr_cycles:.2f} "
+                        f"fault={fired_fault/nbr_cycles:.2f} "
+                        f"total={(fired_temp+fired_hum+fired_fault)/nbr_cycles:.2f}"
+                    )
+                    last_report = now
+                    fired_temp = 0
+                    fired_hum = 0
+                    fired_fault = 0
+                    nbr_cycles = 0
 
                 # Sleep a short time to avoid busy-waiting
-                await asyncio.sleep(0.1)
+                await asyncio.sleep(0.01)
 
         finally:
             logger.info("Server stopped")
