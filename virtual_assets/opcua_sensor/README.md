@@ -63,6 +63,19 @@ If `NUM_SENSORS=2`, the structure looks like this (under `0:Root/0:Objects`):
 * **OverTemperatureAlarm** – Triggered when temperature exceeds 90% of the configured range.
 * **SensorFaultCondition** – Triggered around `SENSOR_FAULT_AVG` intervals to simulate random sensor errors.
 
+### Timing behavior
+
+Each sensor is assigned a random initial phase when the simulator starts.
+This distributes updates across the reporting interval and avoids startup bursts when simulating large numbers of sensors.
+
+Subsequent update intervals vary by ±20% around the configured average values (`TEMP_SLEEP_AVG`, `HUM_SLEEP_AVG`, and `SENSOR_FAULT_AVG`).
+
+### Event distribution diagnostics
+
+When running the simulator, periodic log messages report the average number of events generated per scheduler cycle.
+
+These diagnostics help verify that events are evenly distributed across time and that large bursts are not created when simulating hundreds of sensors. They are particularly useful when evaluating the impact of scheduler settings and validating load-generation behavior before connecting the simulator to Kafka or other downstream services.
+
 ## 🚀 Deploying
 
 The virtual sensor can be deployed on a local machine or in the OpenFactory cluster.
