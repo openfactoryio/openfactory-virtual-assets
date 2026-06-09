@@ -44,13 +44,30 @@ devices:
 
 ## 🚀 Deploying
 
-Deploy the virtual temperature sensor:
+### 🖥️ Local machine
+
+Run as a Docker container:
+
+```bash
+docker run -d -p 7878:7878 --name virtual-shdr-sensor ghcr.io/openfactoryio/virtual-temp-sensor
+```
+
+Connect it to OpenFactory:
 
 ```bash
 ofa device up temp_sensor.yml
 ```
 
-OpenFactory will automatically build and deploy the virtual asset based on this configuration.
+### ☁️ On the OpenFactory cluster
+
+Deploy as a Swarm service:
+
+```bash
+docker service create \
+  --name virtual-shdr-sensor \
+  --publish 7878:7878 \
+  ghcr.io/openfactoryio/virtual-temp-sensor
+```
 
 ## 🛠 Development
 
