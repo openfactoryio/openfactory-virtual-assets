@@ -2,14 +2,9 @@
   "name": "OpenFactory-VirtualAssets — Collection of virtual assets for OpenFactory",
   "image": "ghcr.io/openfactoryio/devcontainer-py3.12",
   "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2.16.1": {},
-    "ghcr.io/openfactoryio/openfactory-sdk/infra": {
-      "openfactory-version": "main"
-    },
-    "ghcr.io/openfactoryio/openfactory-sdk/opcua-connector": {
-      "opcua-gateway-version": "latest",
-      "opcua-coordinator-version": "latest"
-    }
+    "ghcr.io/devcontainers/features/docker-in-docker:3.0.1": {},
+    "ghcr.io/openfactoryio/openfactory-sdk/infra": {},
+    "ghcr.io/openfactoryio/openfactory-sdk/opcua-connector": {}
   },
   "customizations": {
     "vscode": {
