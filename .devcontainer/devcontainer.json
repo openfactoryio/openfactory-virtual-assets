@@ -4,7 +4,7 @@
   "features": {
     "ghcr.io/devcontainers/features/docker-in-docker:4.0.0": {},
     "ghcr.io/openfactoryio/openfactory-sdk/infra": {},
-    "ghcr.io/openfactoryio/openfactory-sdk/opcua-connector": {}
+    "ghcr.io/openfactoryio/openfactory-sdk/connectors": {}
   },
   "customizations": {
     "vscode": {
